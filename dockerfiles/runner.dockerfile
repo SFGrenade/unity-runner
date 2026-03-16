@@ -15,59 +15,66 @@ WORKDIR /tmp
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        bash \
-        build-essential \
-        ca-certificates \
-        cmake \
-        curl \
-        git \
-        git-lfs \
-        gnupg \
-        jq \
-        libsqlite3-dev \
-        libssl-dev \
-        openjdk-17-jre-headless \
-        pkg-config \
-        software-properties-common \
-        unzip \
-        wget \
-        xz-utils \
-        zip \
-        zlib1g-dev \
-     && git lfs install --system \
+    bash \
+    build-essential \
+    ca-certificates \
+    cmake \
+    curl \
+    git \
+    git-lfs \
+    gnupg \
+    jq \
+    libsqlite3-dev \
+    libssl-dev \
+    openjdk-17-jre-headless \
+    pkg-config \
+    software-properties-common \
+    unzip \
+    wget \
+    xz-utils \
+    zip \
+    zlib1g-dev \
+    && git lfs install --system \
     && rm -rf /var/lib/apt/lists/* \
     && update-ca-certificates;
 
 # == Runtimes, Languages, & Package Managers ==
+# - Pigz
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends pigz \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf /usr/bin/pigz /usr/bin/gzip \
+    && gzip --version
+
 # - Node
 ARG NODE_VERSION=24
 LABEL org.nodejs.version="${NODE_VERSION}"
 RUN mkdir -p /etc/apt/keyrings \
- && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
     | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
- && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_VERSION}.x nodistro main" \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_VERSION}.x nodistro main" \
     > /etc/apt/sources.list.d/nodesource.list \
- && apt-get update \
- && apt-get install -y --no-install-recommends nodejs \
- && corepack enable \
- && node -v \
- && npm -v \
- && which node \
- && rm -rf /var/lib/apt/lists/*
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && corepack enable \
+    && node -v \
+    && npm -v \
+    && which node \
+    && rm -rf /var/lib/apt/lists/*
 
 # - Powershell & Dotnet
 RUN apt-get update \
- && apt-get install -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
     apt-transport-https \
- && wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
- && dpkg -i packages-microsoft-prod.deb \
- && rm packages-microsoft-prod.deb \
- && apt-get update \
- && apt-get install -y --no-install-recommends \
-      powershell \
-      dotnet-sdk-8.0 \
- && pwsh --version \
- && rm -rf /var/lib/apt/lists/*
+    && wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb \
+    && rm packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    powershell \
+    dotnet-sdk-8.0 \
+    && pwsh --version \
+    && rm -rf /var/lib/apt/lists/*
 
 # - ReSharper
 RUN dotnet tool install -g JetBrains.ReSharper.GlobalTools
@@ -101,17 +108,17 @@ ENV PATH="/opt/blender/blender-${BLENDER_FULL_VERSION}-linux-x64:${PATH}"
 
 # - Butler
 RUN curl -L https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default -o butler.zip \
- && unzip butler.zip -d /opt/butler \
- && chmod +x /opt/butler/butler \
- && ln -s /opt/butler/butler /usr/local/bin/butler \
- && rm butler.zip
+    && unzip butler.zip -d /opt/butler \
+    && chmod +x /opt/butler/butler \
+    && ln -s /opt/butler/butler /usr/local/bin/butler \
+    && rm butler.zip
 
 # == Scripts ==
 # - GameCI
 RUN git clone --depth=1 https://github.com/game-ci/unity-builder.git /gameci && \
-  cp -rf /gameci/dist/platforms/ubuntu/steps /steps && \
-  cp -rf /gameci/dist/default-build-script /UnityBuilderAction && \
-  cp /gameci/dist/platforms/ubuntu/entrypoint.sh /entrypoint.sh
+    cp -rf /gameci/dist/platforms/ubuntu/steps /steps && \
+    cp -rf /gameci/dist/default-build-script /UnityBuilderAction && \
+    cp /gameci/dist/platforms/ubuntu/entrypoint.sh /entrypoint.sh
 # - Build Helper
 COPY --chmod=774 scripts/build.sh /build.sh
 
