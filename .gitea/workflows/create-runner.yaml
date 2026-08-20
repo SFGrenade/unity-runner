@@ -78,7 +78,7 @@ jobs:
           skopeo copy \
             --dest-tls-verify=false \
             docker://docker.io/unityci/editor:${TAG} \
-            docker://${{ vars.DOCKER_REGISTRY }}/unityci/editor:${TAG}
+            docker://${{ vars.DOCKER_REGISTRY }}/SFGrenade/unity-runner:${TAG}
 
   build:
     runs-on: ubuntu-latest
@@ -121,6 +121,6 @@ jobs:
             UNITY_PLATFORM=${{ matrix.platform }}
             GAMECI_OS=${{ matrix.os }}
             GAMECI_VERSION=3
-            GAMECI_IMAGE=${{ vars.DOCKER_REGISTRY }}/unityci/editor
-          tags: ${{ vars.DOCKER_REGISTRY }}/unityci/editor:${{ matrix.os }}-${{ matrix.version }}-${{ matrix.platform }}-runner
+            GAMECI_IMAGE=${{ vars.DOCKER_REGISTRY }}/SFGrenade/unity-runner
+          tags: ${{ vars.DOCKER_REGISTRY }}/SFGrenade/unity-runner:${{ matrix.os }}-${{ matrix.version }}-${{ matrix.platform }}-runner
           push: true
