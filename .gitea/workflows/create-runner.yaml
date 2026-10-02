@@ -15,12 +15,12 @@ on:
         type: choice
         options:
           - all
-          - webgl
-          - android
-          - ios
+          #- webgl
+          #- android
+          #- ios
+          - linux-mono
           - mac-mono
           - windows-mono
-          - linux-il2cpp
 
   push:
     branches: [main]
@@ -90,12 +90,9 @@ jobs:
         version:
           - "${{ needs.version.outputs.UNITY_VERSION }}"
         platform:
-          - webgl
-          - android
-          - ios
+          - linux-mono
           - mac-mono
           - windows-mono
-          - linux-il2cpp
 
     name: ${{ matrix.platform }}
     steps:
